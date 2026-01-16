@@ -89,18 +89,7 @@ public class ParentService {
         return parentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Parent avec l'id " + id + " n'existe pas !"));
     }
-    public List<Bebe> getBebe(String email, String password) {
-        Parent parent = parentRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Email ou mot de passe incorrect !"));
 
-        if (!passwordEncoder.matches(password, parent.getPassword())) {
-            throw new RuntimeException("Email ou mot de passe incorrect !");
-        }
-
-        return Optional.ofNullable(parent.getBebes())
-                .orElse(new ArrayList<>());
-
-    }
     public String login(String email, String password) {
         Parent parent = parentRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email incorrect"));
@@ -111,10 +100,13 @@ public class ParentService {
 
         return jwtService.generateToken(parent);
     }
-    public Activitebebe getActiviteMaintenant(Long idBebe) {
+    public Activitebebe getActiviteMaintenant(String token, Long idBebe) {
+        Parent parent = getParentFromToken(token);
         Bebe bebe = bebeRepository.findById(idBebe)
                 .orElseThrow(() -> new RuntimeException("Bebe introuvable"));
-
+        if (!bebe.getParent().getId().equals(parent.getId())) {
+            throw new RuntimeException("Accès refusé : bébé non autorisé");
+        }
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
 
@@ -126,11 +118,14 @@ public class ParentService {
                 .max(Comparator.comparing(Activitebebe::getTemps))
                 .orElse(null);
     }
-    public List<Activitebebe> getActivitesAujourdhui(Long idBebe) {
-
-        Bebe bebe = bebeRepository.findById(idBebe).get();
+    public List<Activitebebe> getActivitesAujourdhui(String token, Long idBebe) {
+        Parent parent = getParentFromToken(token);
+        Bebe bebe = bebeRepository.findById(idBebe)
+                .orElseThrow(() -> new RuntimeException("Bebe introuvable"));
+        if (!bebe.getParent().getId().equals(parent.getId())) {
+            throw new RuntimeException("Accès refusé : bébé non autorisé");
+        }
         LocalDate today = LocalDate.now();
-
         return Optional.ofNullable(bebe.getActivites())
                 .orElse(new ArrayList<>())
                 .stream()
@@ -142,6 +137,11 @@ public class ParentService {
         String email = jwtService.extractEmail(token);
         return parentRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Parent introuvable depuis token"));
+    }
+    public List<Bebe> getBebesFromToken(String token) {
+        Parent parent = getParentFromToken(token);
+        return Optional.ofNullable(parent.getBebes())
+                .orElse(new ArrayList<>());
     }
 
 }

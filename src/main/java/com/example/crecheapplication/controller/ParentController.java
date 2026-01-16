@@ -37,9 +37,7 @@ public class ParentController {
     @GetMapping("/bebes")
     public List<Bebe> getBebes(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
-        Parent parent = parentService.getParentFromToken(token); // لازم تعمل method تستخرج Parent من JWT
-        return Optional.ofNullable(parent.getBebes())
-                .orElse(new ArrayList<>());
+        return parentService.getBebesFromToken(token);
     }
 
     @DeleteMapping("/{id}")
@@ -59,12 +57,21 @@ public class ParentController {
         return parentService.afficherParent();
     }
     @GetMapping("/bebes/{idBebe}/activites")
-    public List<Activitebebe> getActivitesAujourdhui(@PathVariable Long idBebe) {
-        return parentService.getActivitesAujourdhui(idBebe);
+    public List<Activitebebe> getActivitesAujourdhui(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long idBebe) {
+
+        String token = authHeader.replace("Bearer ", "");
+        return parentService.getActivitesAujourdhui(token, idBebe);
     }
+
     @GetMapping("/bebes/{idBebe}/activite-maintenant")
-    public Activitebebe getActiviteMaintenant(@PathVariable Long idBebe) {
-        return parentService.getActiviteMaintenant(idBebe);
+    public Activitebebe getActiviteMaintenant(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long idBebe) {
+
+        String token = authHeader.replace("Bearer ", "");
+        return parentService.getActiviteMaintenant(token, idBebe);
     }
 
 
