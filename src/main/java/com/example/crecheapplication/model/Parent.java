@@ -1,5 +1,6 @@
 package com.example.crecheapplication.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,8 @@ public class Parent {
     @Column(unique = true,nullable = false)
     private String email;
     private String telephone;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+
     private String password;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

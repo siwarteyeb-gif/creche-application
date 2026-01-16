@@ -6,21 +6,33 @@ import com.example.crecheapplication.model.Parent;
 import com.example.crecheapplication.repository.BebeRepository;
 import com.example.crecheapplication.repository.ParentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 @Service
 public class ParentService {
 
+    private final ParentRepository parentRepository;
+    private final BebeRepository bebeRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    @Autowired
-    private ParentRepository parentRepository;
+    public ParentService(ParentRepository parentRepository,
+                         BebeRepository bebeRepository,
+                         PasswordEncoder passwordEncoder,
+                         JwtService jwtService) {
+        this.parentRepository = parentRepository;
+        this.bebeRepository = bebeRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+    }
 
     public Parent inscrire(String nom, String prenom, String email, String telephone, String password) {
         if (parentRepository.findByNomAndPrenom(nom, prenom).isPresent()) {
@@ -31,7 +43,7 @@ public class ParentService {
         parent.setPrenom(prenom);
         parent.setEmail(email);
         parent.setTelephone(telephone);
-        parent.setPassword(password);
+        parent.setPassword(passwordEncoder.encode(password));
         parent.setModifiedAt(LocalDateTime.now());
         parent.setCreatedAt(LocalDateTime.now());
         return parentRepository.save(parent);
@@ -60,8 +72,7 @@ public class ParentService {
         parent.setPrenom(parentDetails.getPrenom());
         parent.setEmail(parentDetails.getEmail());
         parent.setTelephone(parentDetails.getTelephone());
-        parent.setPassword(parentDetails.getPassword());
-        parent.setModifiedAt(LocalDateTime.now());
+        parent.setPassword(passwordEncoder.encode(parentDetails.getPassword()));        parent.setModifiedAt(LocalDateTime.now());
 
         return parentRepository.save(parent);
     }
@@ -79,32 +90,58 @@ public class ParentService {
                 .orElseThrow(() -> new RuntimeException("Parent avec l'id " + id + " n'existe pas !"));
     }
     public List<Bebe> getBebe(String email, String password) {
-        Parent parent = parentRepository.findByEmailAndPassword(email, password)
+        Parent parent = parentRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Email ou mot de passe incorrect !"));
-        return parent.getBebes();
+
+        if (!passwordEncoder.matches(password, parent.getPassword())) {
+            throw new RuntimeException("Email ou mot de passe incorrect !");
+        }
+
+        return Optional.ofNullable(parent.getBebes())
+                .orElse(new ArrayList<>());
+
     }
     public String login(String email, String password) {
         Parent parent = parentRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Email incorrect"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email incorrect"));
 
-        if(!parent.getPassword().equals(password)) {
-            throw new RuntimeException("Mot de passe incorrect");
+        if (!passwordEncoder.matches(password, parent.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Mot de passe incorrect");
         }
 
         return jwtService.generateToken(parent);
     }
     public Activitebebe getActiviteMaintenant(Long idBebe) {
-
-        Bebe bebe = BebeRepository.findById(idBebe).get();
+        Bebe bebe = bebeRepository.findById(idBebe)
+                .orElseThrow(() -> new RuntimeException("Bebe introuvable"));
 
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
 
-        return bebe.getActivites().stream()
+        return Optional.ofNullable(bebe.getActivites())
+                .orElse(new ArrayList<>())
+                .stream()
                 .filter(a -> a.getDate().equals(today))
                 .filter(a -> !a.getTemps().isAfter(now))
                 .max(Comparator.comparing(Activitebebe::getTemps))
                 .orElse(null);
+    }
+    public List<Activitebebe> getActivitesAujourdhui(Long idBebe) {
+
+        Bebe bebe = bebeRepository.findById(idBebe).get();
+        LocalDate today = LocalDate.now();
+
+        return Optional.ofNullable(bebe.getActivites())
+                .orElse(new ArrayList<>())
+                .stream()
+                .filter(a -> a.getDate().equals(today))
+                .sorted(Comparator.comparing(Activitebebe::getTemps))
+                .toList();
+    }
+    public Parent getParentFromToken(String token) {
+        String email = jwtService.extractEmail(token);
+        return parentRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Parent introuvable depuis token"));
     }
 
 }
