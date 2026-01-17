@@ -4,10 +4,11 @@ import com.example.crecheapplication.model.Parent;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-
+@Service
 public class JwtService {
 
     private static final String SECRET_KEY = "my_super_secret_key_123456789_my_super_secret_key";
@@ -34,6 +35,24 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+    public boolean isTokenValid(String token, Parent parent) {
+        try {
+            String email = extractEmail(token);
+            return email.equals(parent.getEmail()) && !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isTokenExpired(String token) {
+        Date expiration = Jwts.parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+        return expiration.before(new Date());
     }
 
 }

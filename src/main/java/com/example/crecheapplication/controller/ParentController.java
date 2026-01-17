@@ -6,10 +6,7 @@ import com.example.crecheapplication.model.Parent;
 import com.example.crecheapplication.service.ParentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -71,7 +68,7 @@ public class ParentController {
             @PathVariable Long idBebe) {
 
         String token = authHeader.replace("Bearer ", "");
-        return parentService.getActiviteMaintenant(token, idBebe);
+        return parentService.getActiviteMaintenan(token, idBebe);
     }
 
 

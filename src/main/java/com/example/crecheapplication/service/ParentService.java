@@ -100,7 +100,7 @@ public class ParentService {
 
         return jwtService.generateToken(parent);
     }
-    public Activitebebe getActiviteMaintenant(String token, Long idBebe) {
+    public Activitebebe getActiviteMaintenan(String token, Long idBebe) {
         Parent parent = getParentFromToken(token);
         Bebe bebe = bebeRepository.findById(idBebe)
                 .orElseThrow(() -> new RuntimeException("Bebe introuvable"));
@@ -109,7 +109,6 @@ public class ParentService {
         }
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
-
         return Optional.ofNullable(bebe.getActivites())
                 .orElse(new ArrayList<>())
                 .stream()

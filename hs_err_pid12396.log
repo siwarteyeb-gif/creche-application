@@ -1,0 +1,220 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 264241152 bytes for G1 virtual space
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   The process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+#   JVM is running with Zero Based Compressed Oops mode in which the Java heap is
+#     placed in the first 32GB address space. The Java Heap base address is the
+#     maximum limit for the native heap growth. Please use -XX:HeapBaseMinAddress
+#     to set the Java Heap base and to place the Java Heap above 32GB virtual address.
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (os_windows.cpp:3532), pid=12396, tid=10880
+#
+# JRE version:  (17.0.2+8) (build )
+# Java VM: OpenJDK 64-Bit Server VM (17.0.2+8-86, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, windows-amd64)
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Dmaven.multiModuleProjectDirectory=C:\creche-application -Dmaven.home=C:\Users\dell\AppData\Local\JetBrains\IntelliJ IDEA 2021.3.1\plugins\maven\lib\maven3 -Dclassworlds.conf=C:\Users\dell\AppData\Local\JetBrains\IntelliJ IDEA 2021.3.1\plugins\maven\lib\maven3\bin\m2.conf -Dmaven.ext.class.path=C:\Users\dell\AppData\Local\JetBrains\IntelliJ IDEA 2021.3.1\plugins\maven\lib\maven-event-listener.jar -javaagent:C:\Users\dell\AppData\Local\JetBrains\IntelliJ IDEA 2021.3.1\lib\idea_rt.jar=65108:C:\Users\dell\AppData\Local\JetBrains\IntelliJ IDEA 2021.3.1\bin -Dfile.encoding=UTF-8 org.codehaus.classworlds.Launcher -Didea.version=2021.3.1 install
+
+Host: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, 8 cores, 15G,  Windows 11 , 64 bit Build 22621 (10.0.22621.5415)
+Time: Sat Jan 17 11:51:26 2026 Paris, Madrid elapsed time: 0.009669 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000015002bb4b90):  JavaThread "Unknown thread" [_thread_in_vm, id=10880, stack(0x0000004222c00000,0x0000004222d00000)]
+
+Stack: [0x0000004222c00000,0x0000004222d00000]
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x670baa]
+V  [jvm.dll+0x7cfcb4]
+V  [jvm.dll+0x7d145e]
+V  [jvm.dll+0x7d1ac3]
+V  [jvm.dll+0x242bc5]
+V  [jvm.dll+0x66dac9]
+V  [jvm.dll+0x662412]
+V  [jvm.dll+0x300c0b]
+V  [jvm.dll+0x3081a6]
+V  [jvm.dll+0x357d0e]
+V  [jvm.dll+0x357f3f]
+V  [jvm.dll+0x2d7ec8]
+V  [jvm.dll+0x2d8e34]
+V  [jvm.dll+0x7a18c1]
+V  [jvm.dll+0x365a91]
+V  [jvm.dll+0x780d2c]
+V  [jvm.dll+0x3e845f]
+V  [jvm.dll+0x3e9f01]
+C  [jli.dll+0x527b]
+C  [ucrtbase.dll+0x29333]
+C  [KERNEL32.DLL+0x1259d]
+C  [ntdll.dll+0x5af78]
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x00007ffdaa899858, length=0, elements={
+}
+
+Java Threads: ( => current thread )
+
+Other Threads:
+  0x0000015002c05870 GCTaskThread "GC Thread#0" [stack: 0x0000004222d00000,0x0000004222e00000] [id=5444]
+  0x0000015002c16370 ConcurrentGCThread "G1 Main Marker" [stack: 0x0000004222e00000,0x0000004222f00000] [id=18448]
+  0x0000015002c16d80 ConcurrentGCThread "G1 Conc#0" [stack: 0x0000004222f00000,0x0000004223000000] [id=17056]
+
+[error occurred during error reporting (printing all threads), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffdaa0e88a7]
+
+VM state: not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x0000015002bb1740] Heap_lock - owner thread: 0x0000015002bb4b90
+
+Heap address: 0x0000000704400000, size: 4028 MB, Compressed Oops mode: Zero based, Oop shift amount: 3
+
+CDS archive(s) mapped at: [0x0000000000000000-0x0000000000000000-0x0000000000000000), size 0, SharedBaseAddress: 0x0000000800000000, ArchiveRelocationMode: 0.
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 0, Narrow klass range: 0x0
+
+GC Precious Log:
+<Empty>
+
+Heap:
+ garbage-first heap   total 0K, used 0K [0x0000000704400000, 0x0000000800000000)
+  region size 2048K, 0 young (0K), 0 survivors (0K)
+
+[error occurred during error reporting (printing heap information), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffdaa4c9f19]
+
+GC Heap History (0 events):
+No events
+
+Deoptimization events (0 events):
+No events
+
+Classes unloaded (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+VM Operations (0 events):
+No events
+
+Events (1 events):
+Event: 0.006 Loaded shared library C:\Users\dell\.jdks\openjdk-17.0.2\bin\java.dll
+
+
+Dynamic libraries:
+0x00007ff71da50000 - 0x00007ff71da5e000 	C:\Users\dell\.jdks\openjdk-17.0.2\bin\java.exe
+0x00007ffdfb310000 - 0x00007ffdfb528000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ffdfa0e0000 - 0x00007ffdfa1a4000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007ffdf8990000 - 0x00007ffdf8d63000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007ffdf8d70000 - 0x00007ffdf8e81000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007ffdf45e0000 - 0x00007ffdf45f8000 	C:\Users\dell\.jdks\openjdk-17.0.2\bin\jli.dll
+0x00007ffdf4580000 - 0x00007ffdf459a000 	C:\Users\dell\.jdks\openjdk-17.0.2\bin\VCRUNTIME140.dll
+0x00007ffdf95e0000 - 0x00007ffdf9792000 	C:\WINDOWS\System32\USER32.dll
+0x00007ffdf84a0000 - 0x00007ffdf84c6000 	C:\WINDOWS\System32\win32u.dll
+0x00007ffdded50000 - 0x00007ffddefec000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22621.6060_none_2712eda17382d24b\COMCTL32.dll
+0x00007ffdfa040000 - 0x00007ffdfa069000 	C:\WINDOWS\System32\GDI32.dll
+0x00007ffdf9370000 - 0x00007ffdf9417000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007ffdf8e90000 - 0x00007ffdf8fab000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007ffdf88f0000 - 0x00007ffdf898a000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007ffdf9330000 - 0x00007ffdf9361000 	C:\WINDOWS\System32\IMM32.DLL
+0x00007ffdf4790000 - 0x00007ffdf479c000 	C:\Users\dell\.jdks\openjdk-17.0.2\bin\vcruntime140_1.dll
+0x00007ffdf4430000 - 0x00007ffdf44bd000 	C:\Users\dell\.jdks\openjdk-17.0.2\bin\msvcp140.dll
+0x00007ffda9e00000 - 0x00007ffdaa9c1000 	C:\Users\dell\.jdks\openjdk-17.0.2\bin\server\jvm.dll
+0x00007ffdfa9f0000 - 0x00007ffdfaaa1000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007ffdfb000000 - 0x00007ffdfb0a8000 	C:\WINDOWS\System32\sechost.dll
+0x00007ffdf8610000 - 0x00007ffdf8638000 	C:\WINDOWS\System32\bcrypt.dll
+0x00007ffdfaab0000 - 0x00007ffdfabc8000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007ffdf9190000 - 0x00007ffdf9198000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007ffdda210000 - 0x00007ffdda219000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ffdf3ef0000 - 0x00007ffdf3efa000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ffdf3c10000 - 0x00007ffdf3c44000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ffdfb250000 - 0x00007ffdfb2c1000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007ffdf7450000 - 0x00007ffdf7468000 	C:\WINDOWS\SYSTEM32\kernel.appcore.dll
+0x00007ffdf4740000 - 0x00007ffdf474a000 	C:\Users\dell\.jdks\openjdk-17.0.2\bin\jimage.dll
+0x00007ffdf5d30000 - 0x00007ffdf5f63000 	C:\WINDOWS\SYSTEM32\DBGHELP.DLL
+0x00007ffdfabf0000 - 0x00007ffdfaf81000 	C:\WINDOWS\System32\combase.dll
+0x00007ffdf9250000 - 0x00007ffdf9328000 	C:\WINDOWS\System32\OLEAUT32.dll
+0x00007ffdea630000 - 0x00007ffdea662000 	C:\WINDOWS\SYSTEM32\dbgcore.DLL
+0x00007ffdf8420000 - 0x00007ffdf849b000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007ffde7310000 - 0x00007ffde731e000 	C:\Users\dell\.jdks\openjdk-17.0.2\bin\instrument.dll
+0x00007ffde6b60000 - 0x00007ffde6b85000 	C:\Users\dell\.jdks\openjdk-17.0.2\bin\java.dll
+
+dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
+symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Users\dell\.jdks\openjdk-17.0.2\bin;C:\WINDOWS\SYSTEM32;C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22621.6060_none_2712eda17382d24b;C:\Users\dell\.jdks\openjdk-17.0.2\bin\server
+
+VM Arguments:
+jvm_args: -Dmaven.multiModuleProjectDirectory=C:\creche-application -Dmaven.home=C:\Users\dell\AppData\Local\JetBrains\IntelliJ IDEA 2021.3.1\plugins\maven\lib\maven3 -Dclassworlds.conf=C:\Users\dell\AppData\Local\JetBrains\IntelliJ IDEA 2021.3.1\plugins\maven\lib\maven3\bin\m2.conf -Dmaven.ext.class.path=C:\Users\dell\AppData\Local\JetBrains\IntelliJ IDEA 2021.3.1\plugins\maven\lib\maven-event-listener.jar -javaagent:C:\Users\dell\AppData\Local\JetBrains\IntelliJ IDEA 2021.3.1\lib\idea_rt.jar=65108:C:\Users\dell\AppData\Local\JetBrains\IntelliJ IDEA 2021.3.1\bin -Dfile.encoding=UTF-8 
+java_command: org.codehaus.classworlds.Launcher -Didea.version=2021.3.1 install
+java_class_path (initial): C:\Users\dell\AppData\Local\JetBrains\IntelliJ IDEA 2021.3.1\plugins\maven\lib\maven3\boot\plexus-classworlds-2.6.0.jar;C:\Users\dell\AppData\Local\JetBrains\IntelliJ IDEA 2021.3.1\plugins\maven\lib\maven3\boot\plexus-classworlds.license
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+     intx CICompilerCount                          = 4                                         {product} {ergonomic}
+     uint ConcGCThreads                            = 2                                         {product} {ergonomic}
+     uint G1ConcRefinementThreads                  = 8                                         {product} {ergonomic}
+   size_t G1HeapRegionSize                         = 2097152                                   {product} {ergonomic}
+    uintx GCDrainStackTargetSize                   = 64                                        {product} {ergonomic}
+   size_t InitialHeapSize                          = 264241152                                 {product} {ergonomic}
+   size_t MarkStackSize                            = 4194304                                   {product} {ergonomic}
+   size_t MaxHeapSize                              = 4223664128                                {product} {ergonomic}
+   size_t MinHeapDeltaBytes                        = 2097152                                   {product} {ergonomic}
+   size_t MinHeapSize                              = 8388608                                   {product} {ergonomic}
+    uintx NonNMethodCodeHeapSize                   = 5839372                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122909434                              {pd product} {ergonomic}
+    uintx ProfiledCodeHeapSize                     = 122909434                              {pd product} {ergonomic}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+   size_t SoftMaxHeapSize                          = 4223664128                             {manageable} {ergonomic}
+     bool UseCompressedClassPointers               = true                           {product lp64_product} {ergonomic}
+     bool UseCompressedOops                        = true                           {product lp64_product} {ergonomic}
+     bool UseG1GC                                  = true                                      {product} {ergonomic}
+     bool UseLargePagesIndividualAllocation        = false                                  {pd product} {ergonomic}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags
+ #1: stderr all=off uptime,level,tags
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-17.0.17.10-hotspot
+PATH=C:\Program Files\Eclipse Adoptium\jdk-17.0.17.10-hotspot\bin;C:\PySchool\3.10-32-bit\Scripts;C:\PySchool\3.10-32-bit;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Java\jdk-11.0.13\bin;C:\HashiCorp\Vagrant\bin;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\MATLAB\R2024b\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\semestre2\tp1\jdk-8u202-windows-x64.exe;C:\Program Files\Java\jdk1.8.0_202\bin;C:\Users\dell\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\apache-maven-3.8.4\bin;C:\Program Files\Heroku\bin;C:\Users\dell\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\Eclipse Adoptium\jdk-17.0.17.10-hotspot;;C:\Users\dell\AppData\Roaming\npm;C:\Program Files\Java\jdk1.8.0_202\bin;C:\Program Files\Eclipse Adoptium\jdk-17.0.17.10-hotspot;
+USERNAME=dell
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 140 Stepping 1, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS:
+ Windows 11 , 64 bit Build 22621 (10.0.22621.5415)
+OS uptime: 1 days 0:47 hours
+Hyper-V role detected
+
+CPU: total 8 (initial active 8) (4 cores per cpu, 2 threads per core) family 6 model 140 stepping 1 microcode 0xbc, cx8, cmov, fxsr, ht, mmx, 3dnowpref, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, lzcnt, tsc, tscinvbit, avx, avx2, aes, erms, clmul, bmi1, bmi2, adx, avx512f, avx512dq, avx512cd, avx512bw, avx512vl, sha, fma, vzeroupper, avx512_vpopcntdq, avx512_vpclmulqdq, avx512_vaes, avx512_vnni, clflush, clflushopt, clwb, avx512_vbmi2, avx512_vbmi, hv
+
+Memory: 4k page, system-wide physical 16110M (3602M free)
+TotalPageFile size 16110M (AvailPageFile size 90M)
+current process WorkingSet (physical memory assigned to process): 11M, peak: 11M
+current process commit charge ("private bytes"): 60M, peak: 312M
+
+vm_info: OpenJDK 64-Bit Server VM (17.0.2+8-86) for windows-amd64 JRE (17.0.2+8-86), built on Dec  7 2021 21:49:10 by "mach5one" with MS VC++ 16.8 / 16.9 (VS2019)
+
+END.
