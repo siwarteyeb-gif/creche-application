@@ -34,6 +34,7 @@ public class Parent {
     private LocalDateTime modifiedAt;
     @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL)
     private List<Bebe> bebes;
-
+    @Column(nullable = false)
+    private String role;
 
 }

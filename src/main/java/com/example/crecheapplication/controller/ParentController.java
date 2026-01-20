@@ -68,7 +68,7 @@ public class ParentController {
             @PathVariable Long idBebe) {
 
         String token = authHeader.replace("Bearer ", "");
-        return parentService.getActiviteMaintenan(token, idBebe);
+        return parentService.getActiviteMaintenant(token, idBebe);
     }
 
 

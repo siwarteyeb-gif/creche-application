@@ -46,6 +46,7 @@ public class ParentService {
         parent.setPassword(passwordEncoder.encode(password));
         parent.setModifiedAt(LocalDateTime.now());
         parent.setCreatedAt(LocalDateTime.now());
+        parent.setRole("ROLE_PARENT");
         return parentRepository.save(parent);
     }
 
@@ -100,7 +101,7 @@ public class ParentService {
 
         return jwtService.generateToken(parent);
     }
-    public Activitebebe getActiviteMaintenan(String token, Long idBebe) {
+    public Activitebebe getActiviteMaintenant(String token, Long idBebe) {
         Parent parent = getParentFromToken(token);
         Bebe bebe = bebeRepository.findById(idBebe)
                 .orElseThrow(() -> new RuntimeException("Bebe introuvable"));
@@ -141,6 +142,10 @@ public class ParentService {
         Parent parent = getParentFromToken(token);
         return Optional.ofNullable(parent.getBebes())
                 .orElse(new ArrayList<>());
+    }
+    public Parent afficherParentParEmail(String email) {
+        return parentRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Parent avec email " + email + " introuvable"));
     }
 
 }
