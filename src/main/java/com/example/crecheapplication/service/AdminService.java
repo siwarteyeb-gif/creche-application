@@ -95,6 +95,27 @@ public class AdminService {
 
         return bebeRepository.save(bebe);
     }
+    public Bebe updateBebe(Long id, Bebe bebeDetails) {
+        Bebe bebe = bebeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Bébé introuvable"));
+
+        bebe.setNom(bebeDetails.getNom());
+        bebe.setPrenom(bebeDetails.getPrenom());
+        bebe.setDateNais(bebeDetails.getDateNais());
+        bebe.setModifiedAt(LocalDateTime.now());
+        if (bebeDetails.getParent() != null) {
+            Parent parent = parentRepository.findById(bebeDetails.getParent().getId())
+                    .orElseThrow(() -> new RuntimeException("Parent introuvable"));
+            bebe.setParent(parent);
+        }
+        return bebeRepository.save(bebe);
+    }
+
+    public void deleteBebe(Long id) {
+        Bebe bebe = bebeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Bébé introuvable"));
+        bebeRepository.delete(bebe);
+    }
 }
 
 

@@ -113,4 +113,16 @@ public class AdminController {
                 parent.getRole()
         );
     }
+    @PutMapping("/bebe/{id}")
+    public Bebe updateBebe(@PathVariable Long id, @RequestBody Bebe bebe, @RequestHeader("Authorization") String authHeader) {
+        checkAdmin(authHeader);
+        return adminService.updateBebe(id, bebe);
+    }
+
+    @DeleteMapping("/bebe/{id}")
+    public String deleteBebe(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+        checkAdmin(authHeader);
+        adminService.deleteBebe(id);
+        return "Bébé supprimé avec succès";
+    }
 }
