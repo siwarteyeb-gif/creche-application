@@ -6,7 +6,9 @@ import com.example.crecheapplication.model.Parent;
 import com.example.crecheapplication.service.AdminService;
 import com.example.crecheapplication.service.JwtService;
 import com.example.crecheapplication.service.ParentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class AdminController {
     // ✅ check admin فقط هنا
     private void checkAdmin(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("Token manquant");
+            throw new RuntimeException("token manquant");
         }
 
         String token = authHeader.substring(7);
@@ -46,15 +48,19 @@ public class AdminController {
         checkAdmin(authHeader);
         return adminService.getAllParents();
     }
+    @GetMapping("/activites")
+    public List<Activitebebe> getAllActivites(@RequestHeader("Authorization") String authHeader) {
+        checkAdmin(authHeader);
+        return adminService.getAllActivites();
+    }
 
-    // 🔹 bébés
     @GetMapping("/bebes")
     public List<Bebe> getAllBebes(@RequestHeader("Authorization") String authHeader) {
         checkAdmin(authHeader);
         return adminService.getAllBebes();
     }
 
-    // 🔹 parent d’un bébé
+    //  parent d’un bébé
     @GetMapping("/bebe/{id}/parent")
     public Parent getParentOfBebe(@PathVariable Long id,
                                   @RequestHeader("Authorization") String authHeader) {
@@ -75,7 +81,15 @@ public class AdminController {
     public Parent updateRole(@PathVariable Long id,
                              @RequestParam String role,
                              @RequestHeader("Authorization") String authHeader) {
+
         checkAdmin(authHeader);
+        if (!"ROLE_ADMIN".equals(role) && !"ROLE_PARENT".equals(role)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Role invalide (ROLE_ADMIN ou ROLE_PARENT)"
+            );
+        }
+
         return adminService.updateRole(id, role);
     }
 
@@ -124,5 +138,42 @@ public class AdminController {
         checkAdmin(authHeader);
         adminService.deleteBebe(id);
         return "Bébé supprimé avec succès";
+    }
+    @GetMapping("/bebe/{id}/activites/aujourdhui")
+    public List<Activitebebe> getActivitesAujourdhui(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader) {
+
+        checkAdmin(authHeader);
+
+        return adminService.getActivitesDuJour(id);
+    }
+    @PostMapping("/bebe/{id}/activites")
+    public Activitebebe ajouterActiviteAuBebe(
+            @PathVariable Long id,
+            @RequestBody Activitebebe activiteBebe,
+            @RequestHeader("Authorization") String authHeader) {
+        checkAdmin(authHeader);
+        return adminService.ajouterActivite(id, activiteBebe);
+    }
+    @PutMapping("/activites/{id}")
+    public Activitebebe modifierActiviteAuBebe(
+            @PathVariable Long id,
+            @RequestBody Activitebebe activiteDetails,
+            @RequestHeader("Authorization") String authHeader) {
+
+        checkAdmin(authHeader);
+
+        return adminService.modifierActivite(id, activiteDetails);
+    }
+    @DeleteMapping("/activites/{id}")
+    public String supprimerActiviteAuBebe(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader) {
+
+        checkAdmin(authHeader);
+
+        adminService.supprimerActivite(id);
+        return "Activité supprimée avec succès";
     }
 }

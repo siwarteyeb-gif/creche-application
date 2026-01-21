@@ -86,6 +86,7 @@ public class ParentService {
     public List<Parent> afficherParent() {
         return parentRepository.findAll();
     }
+
     public Parent afficherParentParId(Long id) {
         return parentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Parent avec l'id " + id + " n'existe pas !"));
