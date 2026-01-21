@@ -37,10 +37,6 @@ public class ParentController {
         return parentService.getBebesFromToken(token);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteParent(@PathVariable Long id) {
-        parentService.supprimerParent(id);
-    }
     @PutMapping("/{id}")
     public Parent updateParent(@PathVariable Long id, @RequestBody Parent parent) {
         return parentService.modifierParent(id, parent);
@@ -48,10 +44,6 @@ public class ParentController {
     @GetMapping("/{id}")
     public Parent getParentById(@PathVariable Long id) {
         return parentService.afficherParentParId(id);
-    }
-    @GetMapping("/parents")
-    public List<Parent> getAllParents() {
-        return parentService.afficherParent();
     }
     @GetMapping("/bebes/{idBebe}/activites")
     public List<Activitebebe> getActivitesAujourdhui(

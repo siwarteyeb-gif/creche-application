@@ -35,8 +35,9 @@ public class ParentService {
     }
 
     public Parent inscrire(String nom, String prenom, String email, String telephone, String password) {
-        if (parentRepository.findByNomAndPrenom(nom, prenom).isPresent()) {
-            throw new RuntimeException("Un compte avec ce nom, prénom existe déjà !");
+
+        if (parentRepository.findByEmail(email).isPresent()) {
+            throw new RuntimeException("Un compte avec cet email existe déjà !");
         }
         Parent parent = new Parent();
         parent.setNom(nom);
@@ -50,16 +51,7 @@ public class ParentService {
         return parentRepository.save(parent);
     }
 
-    public Parent ajouterParent(Parent parent) {
-        Optional<Parent> existingParent = parentRepository.findByNomAndPrenom(parent.getNom(), parent.getPrenom());
-        if (existingParent.isPresent()) {
-            throw new RuntimeException("Parent avec le même nom et prénom existe déjà !");
-        }
 
-        parent.setCreatedAt(LocalDateTime.now());
-        parent.setModifiedAt(LocalDateTime.now());
-        return parentRepository.save(parent);
-    }
     public Parent modifierParent(Long id, Parent parentDetails) {
         Parent parent = parentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Parent non trouvé avec l'id: " + id));
@@ -77,16 +69,6 @@ public class ParentService {
 
         return parentRepository.save(parent);
     }
-    public void supprimerParent(Long id) {
-        Parent parent = parentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Parent non trouvé avec l'id: " + id));
-
-        parentRepository.delete(parent);
-    }
-    public List<Parent> afficherParent() {
-        return parentRepository.findAll();
-    }
-
     public Parent afficherParentParId(Long id) {
         return parentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Parent avec l'id " + id + " n'existe pas !"));
