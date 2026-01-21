@@ -173,8 +173,6 @@ public class AdminService {
         activite.setModifiedAt(LocalDateTime.now());
         return activitesRepository.save(activite);
     }
-    import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
     public void supprimerActivite(Long idActivite) {
         Activitebebe activite = activitesRepository.findById(idActivite)
