@@ -28,7 +28,6 @@ public class Parent {
     private String email;
     private String telephone;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-
     private String password;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

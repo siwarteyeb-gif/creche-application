@@ -4,13 +4,17 @@ import com.example.crecheapplication.model.Activitebebe;
 import com.example.crecheapplication.model.Bebe;
 import com.example.crecheapplication.model.Parent;
 import com.example.crecheapplication.service.ParentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-
+@CrossOrigin(origins = "http://localhost:4200")
 public class ParentController {
     private  final ParentService parentService;
     public ParentController( ParentService parentService){
@@ -26,25 +30,24 @@ public class ParentController {
                 parent.getPassword()
         );
     }
+    @PutMapping("/modifier")
+    public Parent modifierParent(@RequestHeader("Authorization") String authHeader,@RequestBody Parent parentDetails) {
+        String token = authHeader.replace("Bearer ", "");
+        return parentService.modifierParent(token, parentDetails);}
+
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        String token = parentService.login(request.getEmail(), request.getPassword());
-        return ResponseEntity.ok(token);
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
+        Map<String, String> result = parentService.login(request.getEmail(), request.getPassword());
+        return ResponseEntity.ok(result);
     }
     @GetMapping("/bebes")
     public List<Bebe> getBebes(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
-        return parentService.getBebesFromToken(token);
+        return parentService.getBebes(token);
     }
 
-    @PutMapping("/{id}")
-    public Parent updateParent(@PathVariable Long id, @RequestBody Parent parent) {
-        return parentService.modifierParent(id, parent);
-    }
-    @GetMapping("/{id}")
-    public Parent getParentById(@PathVariable Long id) {
-        return parentService.afficherParentParId(id);
-    }
+
+
     @GetMapping("/bebes/{idBebe}/activites")
     public List<Activitebebe> getActivitesAujourdhui(
             @RequestHeader("Authorization") String authHeader,

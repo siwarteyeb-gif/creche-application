@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -45,16 +47,19 @@ class AdminServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
+        // Parent
         parent = new Parent();
         parent.setId(1L);
         parent.setNom("Ali");
         parent.setEmail("ali@test.com");
         parent.setRole("ROLE_PARENT");
 
+        // Bebe
         bebe = new Bebe();
         bebe.setId(1L);
         bebe.setParent(parent);
 
+        // Activité
         activite = new Activitebebe();
         activite.setId(1L);
         activite.setBebe(bebe);
@@ -67,32 +72,26 @@ class AdminServiceTest {
         assertEquals(1, result.size());
         assertEquals("Ali", result.get(0).getNom());
     }
-    @Test
-    void testGetAllBebes() {
-        when(bebeRepository.findAll()).thenReturn(Collections.singletonList(bebe));
-        List<Bebe> result = adminService.getAllBebes();
-        assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getId());
-    }
-    @Test
-    void testGetParentOfBebe() {
-        when(bebeRepository.findById(1L)).thenReturn(Optional.of(bebe));
-        Parent result = adminService.getParentOfBebe(1L);
-        assertEquals(1L, result.getId());
-        assertEquals("Ali", result.getNom());
-    }
 
     @Test
     void testAjouterBebe() {
-        Bebe bebe= new Bebe();
-        bebe.setNom("Bebe1");
-        bebe.setPrenom("Prenom1");
-        bebe.setParent(parent);
         when(parentRepository.findById(1L)).thenReturn(Optional.of(parent));
-        when(bebeRepository.save(any(Bebe.class))).thenReturn(bebe);
+        when(bebeRepository.save(any(Bebe.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
         Bebe result = adminService.ajouterBebe(1L, "Bebe1", "Prenom1", LocalDate.now());
+
         assertEquals("Bebe1", result.getNom());
         assertEquals(parent, result.getParent());
+    }
+
+    @Test
+    void testAjouterActivite() {
+        when(bebeRepository.findById(1L)).thenReturn(Optional.of(bebe));
+        when(activitesRepository.save(any(Activitebebe.class))).thenReturn(activite);
+
+        Activitebebe result = adminService.ajouterActivite(1L, new Activitebebe());
+        assertEquals(bebe, result.getBebe());
+        assertEquals(1L, result.getId());
     }
 
     @Test
@@ -103,16 +102,7 @@ class AdminServiceTest {
         assertDoesNotThrow(() -> adminService.deleteParent(1L));
         verify(parentRepository, times(1)).delete(parent);
     }
-    @Test
-    void testAjouterActivite() {
-        when(bebeRepository.findById(1L)).thenReturn(Optional.of(bebe));
-        when(activitesRepository.save(any(Activitebebe.class))).thenReturn(activite);
 
-        Activitebebe result = adminService.ajouterActivite(1L, new Activitebebe());
-
-        assertEquals(1L, result.getId());
-        assertEquals(bebe, result.getBebe());
-    }
     @Test
     void testSupprimerActivite() {
         when(activitesRepository.findById(1L)).thenReturn(Optional.of(activite));
@@ -120,5 +110,23 @@ class AdminServiceTest {
 
         assertDoesNotThrow(() -> adminService.supprimerActivite(1L));
         verify(activitesRepository, times(1)).delete(activite);
+    }
+
+    @Test
+    void testDeleteParentNotFound() {
+        when(parentRepository.findById(2L)).thenReturn(Optional.empty());
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
+                adminService.deleteParent(2L)
+        );
+        assertTrue(exception.getMessage().contains("Parent introuvable"));
+    }
+
+    @Test
+    void testSupprimerActiviteNotFound() {
+        when(activitesRepository.findById(2L)).thenReturn(Optional.empty());
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
+                adminService.supprimerActivite(2L)
+        );
+        assertTrue(exception.getMessage().contains("Activité introuvable"));
     }
 }

@@ -14,6 +14,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
+@CrossOrigin(origins = "http://localhost:4200")
+
 public class AdminController {
 
     private final AdminService adminService;
@@ -28,7 +30,6 @@ public class AdminController {
         this.jwtService = jwtService;
     }
 
-    // ✅ check admin فقط هنا
     private void checkAdmin(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new RuntimeException("token manquant");
@@ -39,8 +40,24 @@ public class AdminController {
         Parent parent = parentService.afficherParentParEmail(email);
 
         if (!"ROLE_ADMIN".equals(parent.getRole())) {
-            throw new RuntimeException("Accès refusé (admin فقط)");
+            throw new RuntimeException("Accès refusé pas admin");
         }
+    }
+    @PostMapping("/inscrire")
+    public Parent inscrireAdmin(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody Parent parent
+    ) {
+        checkAdmin(authHeader);
+
+        Parent admin = adminService.inscrireadmin(
+                parent.getNom(),
+                parent.getPrenom(),
+                parent.getEmail(),
+                parent.getTelephone(),
+                parent.getPassword()
+        );
+        return admin;
     }
 
     @GetMapping("/parents")
@@ -76,22 +93,6 @@ public class AdminController {
         return adminService.getActivitesOfBebe(id);
     }
 
-    // 🔹 changer rôle
-    @PutMapping("/parent/{id}/role")
-    public Parent updateRole(@PathVariable Long id,
-                             @RequestParam String role,
-                             @RequestHeader("Authorization") String authHeader) {
-
-        checkAdmin(authHeader);
-        if (!"ROLE_ADMIN".equals(role) && !"ROLE_PARENT".equals(role)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Role invalide (ROLE_ADMIN ou ROLE_PARENT)"
-            );
-        }
-
-        return adminService.updateRole(id, role);
-    }
 
     // 🔹 supprimer parent
     @DeleteMapping("/parent/{id}")
@@ -123,8 +124,13 @@ public class AdminController {
                 parent.getPrenom(),
                 parent.getEmail(),
                 parent.getTelephone(),
-                parent.getPassword(),
-                parent.getRole()
+                parent.getPassword());
+    }
+    @PutMapping("/parents/{id}")
+    public Parent updateParent(@PathVariable Long id,@RequestBody Parent parent,@RequestHeader("Authorization") String authHeader) {
+
+        checkAdmin(authHeader);
+        return adminService.updateParent(id,parent.getNom(),parent.getPrenom(),parent.getEmail(),parent.getTelephone(),parent.getPassword(),parent.getRole()
         );
     }
     @PutMapping("/bebe/{id}")
@@ -146,7 +152,7 @@ public class AdminController {
 
         checkAdmin(authHeader);
 
-        return adminService.getActivitesDuJour(id);
+        return adminService.ActivitesAujourdhuiAdmin(id);
     }
     @PostMapping("/bebe/{id}/activites")
     public Activitebebe ajouterActiviteAuBebe(
@@ -175,5 +181,23 @@ public class AdminController {
 
         adminService.supprimerActivite(id);
         return "Activité supprimée avec succès";
+    }
+    @GetMapping("/admins")
+    public List<Parent> getAllAdmins(
+            @RequestHeader("Authorization") String authHeader) {
+
+        checkAdmin(authHeader);
+        return adminService.getAllAdmins();
+    }
+    @DeleteMapping("/admin/{id}")
+    public String deleteAdmin(@PathVariable Long id,@RequestHeader("Authorization") String authHeader) {
+        checkAdmin(authHeader);
+
+        String token = authHeader.substring(7);
+        String email = jwtService.extractEmail(token);
+
+        adminService.deleteAdmin(id, email);
+
+        return "Admin supprimé avec succès";
     }
 }

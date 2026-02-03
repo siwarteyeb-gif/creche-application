@@ -33,7 +33,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.replace("Bearer ", "");
             try {
-                Parent parent = parentService.getParentFromToken(token);
+                Parent parent = jwtService.getParentFromToken(token);
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(parent, null, new ArrayList<>());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
