@@ -45,7 +45,7 @@ public interface InterfaceParentService {
      * @param idBebe ID du bébé
      * @return L'activité du bébé ou null si aucune activité
      */
-    Activitebebe getActiviteMaintenant(String token, Long idBebe);
+    Activitebebe getLastActivite(String token, Long idBebe);
 
     /**
      * Obtenir toutes les activités d'un bébé pour la journée en cours.

@@ -27,19 +27,17 @@ public interface ActivitesRepository extends JpaRepository<Activitebebe,Long> {
             @Param("parentId") Long parentId,
             @Param("date") LocalDate date);
     @Query("""
-        SELECT a
-        FROM Activitebebe a
-        WHERE a.bebe.id = :bebeId
-          AND a.bebe.parent.id = :parentId
-          AND a.date = :date
-          AND a.temps <= :now
-        ORDER BY a.temps DESC
-    """)
+    SELECT a
+    FROM Activitebebe a
+    WHERE a.bebe.id = :bebeId
+      AND a.bebe.parent.id = :parentId
+    ORDER BY a.date DESC, a.temps DESC
+""")
     List<Activitebebe> findLastActivite(
             @Param("bebeId") Long bebeId,
             @Param("parentId") Long parentId,
-            @Param("date") LocalDate date,
-            @Param("now") LocalTime now, Pageable pageable);
+            Pageable pageable
+    );
     @Query("""
     SELECT a
     FROM Activitebebe a

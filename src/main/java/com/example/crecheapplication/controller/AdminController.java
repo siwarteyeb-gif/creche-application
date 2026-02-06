@@ -200,4 +200,9 @@ public class AdminController {
 
         return "Admin supprimé avec succès";
     }
+    @GetMapping("/parent/{id}")
+    public Parent getParentById(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+        checkAdmin(authHeader); // لازم يكون admin
+        return adminService.getParentById(id);
+    }
 }

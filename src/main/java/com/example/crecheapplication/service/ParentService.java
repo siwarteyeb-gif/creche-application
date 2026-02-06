@@ -1,5 +1,6 @@
 package com.example.crecheapplication.service;
 
+import com.example.crecheapplication.exception.BadRequestException;
 import com.example.crecheapplication.model.Activitebebe;
 import com.example.crecheapplication.model.Bebe;
 import com.example.crecheapplication.model.Parent;
@@ -39,10 +40,9 @@ public class ParentService implements InterfaceParentService{
     public Parent inscrire(String nom, String prenom, String email, String telephone, String password) {
 
         if (parentRepository.findByEmail(email).isPresent()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Un compte avec cet email existe déjà !"
-            );        }
+            throw new BadRequestException("Un compte avec cet email existe déjà !");
+        }
+
         Parent parent = new Parent();
         parent.setNom(nom);
         parent.setPrenom(prenom);
@@ -60,16 +60,16 @@ public class ParentService implements InterfaceParentService{
         Parent parent = jwtService.getParentFromToken(token);
         Optional<Parent> verifEmail = parentRepository.findByEmail(parentDetails.getEmail());
         if (verifEmail.isPresent() && !verifEmail.get().getId().equals(parent.getId())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Un autre parent avec le même email existe déjà !"
+            throw new BadRequestException("Un autre parent avec le même email existe déjà !)"
             );
         }
         parent.setNom(parentDetails.getNom());
         parent.setPrenom(parentDetails.getPrenom());
         parent.setEmail(parentDetails.getEmail());
         parent.setTelephone(parentDetails.getTelephone());
-        parent.setPassword(passwordEncoder.encode(parentDetails.getPassword()));
-        parent.setModifiedAt(LocalDateTime.now());
+        if (parentDetails.getPassword() != null && !parentDetails.getPassword().isEmpty()) {
+            parent.setPassword(passwordEncoder.encode(parentDetails.getPassword()));
+        }        parent.setModifiedAt(LocalDateTime.now());
         return parentRepository.save(parent);
     }
 
@@ -78,7 +78,7 @@ public class ParentService implements InterfaceParentService{
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email ou mot de passe incorrect"));
 
         if (!passwordEncoder.matches(password, parent.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email ou mot de passe incorrect");
+            throw new BadRequestException("Email ou mot de passe incorrect");
         }
 
         String token = jwtService.generateToken(parent);
@@ -88,12 +88,13 @@ public class ParentService implements InterfaceParentService{
                 "role", parent.getRole()
         );
     }
-    public Activitebebe getActiviteMaintenant(String token, Long idBebe) {
+    public Activitebebe getLastActivite(String token, Long idBebe) {
         Parent parent = jwtService.getParentFromToken(token);
-        LocalDate today = LocalDate.now();
-        LocalTime now = LocalTime.now();
+
         Pageable topOne = PageRequest.of(0, 1);
-        List<Activitebebe> activites = activitesRepository.findLastActivite(idBebe,parent.getId(),today,now,topOne);
+        List<Activitebebe> activites =
+                activitesRepository.findLastActivite(idBebe, parent.getId(), topOne);
+
         return activites.isEmpty() ? null : activites.get(0);
     }
     public List<Activitebebe> getActivitesAujourdhui(String token, Long idBebe) {
@@ -114,7 +115,7 @@ public class ParentService implements InterfaceParentService{
     }
     public Parent afficherParentParEmail(String email) {
         return parentRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Parent avec email " + email + " introuvable"));
+                .orElseThrow(() -> new BadRequestException("Parent avec email " + email + " introuvable"));
     }
 
 }

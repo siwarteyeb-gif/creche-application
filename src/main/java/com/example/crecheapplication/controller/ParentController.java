@@ -3,6 +3,7 @@ package com.example.crecheapplication.controller;
 import com.example.crecheapplication.model.Activitebebe;
 import com.example.crecheapplication.model.Bebe;
 import com.example.crecheapplication.model.Parent;
+import com.example.crecheapplication.service.JwtService;
 import com.example.crecheapplication.service.ParentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,10 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:4200")
 public class ParentController {
     private  final ParentService parentService;
-    public ParentController( ParentService parentService){
+
+    private  final JwtService jwtService;
+    public ParentController( ParentService parentService,JwtService jwtService){
+        this.jwtService=jwtService;
         this.parentService=parentService;
     }
     @PostMapping("/inscrire")
@@ -63,8 +67,12 @@ public class ParentController {
             @PathVariable Long idBebe) {
 
         String token = authHeader.replace("Bearer ", "");
-        return parentService.getActiviteMaintenant(token, idBebe);
+        return parentService.getLastActivite(token, idBebe);
     }
-
+    @GetMapping("/parent/me")
+    public Parent getParentConnecte(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        return jwtService.getParentFromToken(token);
+    }
 
 }

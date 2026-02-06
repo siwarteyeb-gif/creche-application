@@ -1,5 +1,6 @@
 package com.example.crecheapplication.service;
 
+import com.example.crecheapplication.exception.BadRequestException;
 import com.example.crecheapplication.model.Activitebebe;
 import com.example.crecheapplication.model.Bebe;
 import com.example.crecheapplication.model.Parent;
@@ -54,24 +55,20 @@ public class AdminService implements InterfaceAdminService{
 
     // 4️⃣ activités d’un bébé
     public List<Activitebebe> getActivitesOfBebe(Long idBebe) {
-        Bebe bebe = bebeRepository.findById(idBebe) .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Bébé introuvable"
-        ));
+        Bebe bebe = bebeRepository.findById(idBebe)
+                .orElseThrow(() -> new BadRequestException("Bébé introuvable"));
         return bebe.getActivites();
     }
 
     public void deleteParent(Long idParent) {
         Parent parent = parentRepository.findById(idParent)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Parent introuvable"
-                ));
+                .orElseThrow(() ->new BadRequestException(
+                        "Parent introuvable")
+                );
         parentRepository.delete(parent);
     }   public Parent createParent(String nom, String prenom, String email, String telephone, String password) {
         if (parentRepository.findByEmail(email).isPresent()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Email déjà utilisé");}
+            throw new BadRequestException("Email déjà utilisé");}
         Parent parent = new Parent();
         parent.setNom(nom);
         parent.setPrenom(prenom);
@@ -86,7 +83,7 @@ public class AdminService implements InterfaceAdminService{
     }
     public Bebe ajouterBebe(Long parentId, String nom, String prenom, LocalDate dateNais) {
         Parent parent = parentRepository.findById(parentId)
-                .orElseThrow(() -> new RuntimeException("Parent introuvable"));
+                .orElseThrow(() ->new BadRequestException("Parent introuvable"));
 
         Bebe bebe = new Bebe();
         bebe.setNom(nom);
@@ -101,7 +98,7 @@ public class AdminService implements InterfaceAdminService{
     public Parent inscrireadmin(String nom, String prenom, String email, String telephone, String password) {
 
         if (parentRepository.findByEmail(email).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"Un compte avec cet email existe déjà !"); }
+            throw new BadRequestException("Un compte avec cet email existe déjà !"); }
         Parent parent = new Parent();
         parent.setNom(nom);
         parent.setPrenom(prenom);
@@ -114,18 +111,13 @@ public class AdminService implements InterfaceAdminService{
         return parentRepository.save(parent);
     }
     public Parent updateParent(Long id,String nom, String prenom,String email, String telephone,String password,String role) {
-        Parent parent = parentRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Parent introuvable"));
+        Parent parent = parentRepository.findById(id).orElseThrow(() ->new BadRequestException ("Parent introuvable"));
         Optional<Parent> parentByEmail = parentRepository.findByEmail(email);
         if (parentByEmail.isPresent() && !parentByEmail.get().getId().equals(id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Email déjà utilisé"
-            );}
+            throw new BadRequestException("Email déjà utilisé")
+            ;}
         if (!"ROLE_ADMIN".equals(role) && !"ROLE_PARENT".equals(role)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Role invalide, uniquement ROLE_ADMIN ou ROLE_PARENT"
+            throw new BadRequestException("Role invalide, uniquement ROLE_ADMIN ou ROLE_PARENT"
             );
         }
         parent.setNom(nom);
@@ -140,33 +132,27 @@ public class AdminService implements InterfaceAdminService{
         return parentRepository.save(parent);
     }
     public Bebe updateBebe(Long id, Bebe bebeDetails) {
-        Bebe bebe = bebeRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "bébé introuvable"));
+        Bebe bebe = bebeRepository.findById(id).orElseThrow(() ->new BadRequestException
+                ("bébé introuvable"));
         bebe.setNom(bebeDetails.getNom());
         bebe.setPrenom(bebeDetails.getPrenom());
         bebe.setDateNais(bebeDetails.getDateNais());
         bebe.setModifiedAt(LocalDateTime.now());
         if (bebeDetails.getParent() != null) {
             Parent parent = parentRepository.findById(bebeDetails.getParent().getId())
-                    .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND,
-                            "Parent introuvable"));
+                    .orElseThrow(() -> new BadRequestException("Parent introuvable"));
             bebe.setParent(parent);
         }
         return bebeRepository.save(bebe);
     }
 
     public void deleteBebe(Long id) {
-        Bebe bebe = bebeRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "bébé introuvable"));
+        Bebe bebe = bebeRepository.findById(id).orElseThrow(() -> new BadRequestException("bébé introuvable"));
         bebeRepository.delete(bebe);
     }
     public List<Activitebebe> getActivitesAujourdhui(Long idBebe) {
         bebeRepository.findById(idBebe)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Bébé introuvable"
-                ));
+                .orElseThrow(() ->new BadRequestException("Bébé introuvable"));
 
         return activitesRepository.findActivitesDuJourAdmin(
                 idBebe,
@@ -174,9 +160,7 @@ public class AdminService implements InterfaceAdminService{
         );
     }
     public Activitebebe ajouterActivite(Long idBebe, Activitebebe activiteBebe) {
-        Bebe bebe = bebeRepository.findById(idBebe) .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Bébé introuvable"
+        Bebe bebe = bebeRepository.findById(idBebe) .orElseThrow(() -> new BadRequestException("Bébé introuvable"
         ));
         activiteBebe.setBebe(bebe);
         activiteBebe.setDate(LocalDate.now());
@@ -188,9 +172,7 @@ public class AdminService implements InterfaceAdminService{
     }
     public Activitebebe modifierActivite(Long idActivite, Activitebebe activiteDetails) {
 
-        Activitebebe activite = activitesRepository.findById(idActivite) .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Activité introuvable"
+        Activitebebe activite = activitesRepository.findById(idActivite) .orElseThrow(() ->new BadRequestException("Activité introuvable"
         ));
         activite.setTypeActivite(activiteDetails.getTypeActivite());
         activite.setNotes(activiteDetails.getNotes());
@@ -199,9 +181,7 @@ public class AdminService implements InterfaceAdminService{
     }
 
     public void supprimerActivite(Long idActivite) {
-        Activitebebe activite = activitesRepository.findById(idActivite).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Activité introuvable"
+        Activitebebe activite = activitesRepository.findById(idActivite).orElseThrow(() -> new BadRequestException("Activité introuvable"
         ));
         activitesRepository.delete(activite);
     }
@@ -211,28 +191,27 @@ public class AdminService implements InterfaceAdminService{
     public void deleteAdmin(Long adminId, String emailFromToken) {
 
         Parent adminToDelete = parentRepository.findById(adminId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Admin introuvable"
+                .orElseThrow(() ->new BadRequestException("Admin introuvable"
                 ));
         if (adminToDelete.getEmail().equals(emailFromToken)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "impossible de supprimer votre propre compte");}
+            throw new BadRequestException("impossible de supprimer votre propre compte");}
 
         parentRepository.delete(adminToDelete);
     }
     public List<Activitebebe> ActivitesAujourdhuiAdmin(Long idBebe) {
         bebeRepository.findById(idBebe)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Bébé introuvable"
+                .orElseThrow(() ->new BadRequestException("Bébé introuvable"
                 ));
 
         return activitesRepository.findActivitesDuJourAdmin(
                 idBebe,
                 LocalDate.now()
         );
+    }
+    public Parent getParentById(Long id) {
+        return parentRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Parent introuvable"
+                ));
     }
 
 }
